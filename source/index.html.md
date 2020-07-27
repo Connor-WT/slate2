@@ -72,7 +72,7 @@ curl --include \
 }
 ```
 
-### create new user account
+### Create new user account
 
 WattTime uses API keys to allow access to the API. You can register a new WattTime API key by providing basic information to create an account.
 
@@ -123,7 +123,7 @@ curl --include \
 }
 
 ```
-### obtain access token
+### Obtain access token
 
 Use HTTP basic auth to exchange your registered username and password for an Access Token. 
 
