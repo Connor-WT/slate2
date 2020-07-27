@@ -20,8 +20,6 @@ code_clipboard: true
 
 # Introduction
 
-New Document
-
 The WattTime API provides access to realtime marginal emissions data for electric grids around the world.  
 
 You can access the API by sending standard HTTP requests to the endpoints listed below. Certain endpoints are only available to subscribers.  
@@ -35,7 +33,7 @@ For example (Python3) code that can be used to register, log in, and query data,
 
 # Authentication
 
-## Register: create new user account
+## Register
 
 > To register, use this code:
 
@@ -74,6 +72,8 @@ curl --include \
 }
 ```
 
+### create new user account
+
 WattTime uses API keys to allow access to the API. You can register a new WattTime API key by providing basic information to create an account.
 
 WattTime expects for the API key to be included in all API requests to the server in a header that looks like the following:  
@@ -97,7 +97,7 @@ organization (required) | organization name | freds world | string
 Remember — add note here 
 </aside>
 
-## Log In: obtain access token
+## Log In
 
 > To register, use this code:
 
@@ -123,6 +123,7 @@ curl --include \
 }
 
 ```
+### obtain access token
 
 Use HTTP basic auth to exchange your registered username and password for an Access Token. 
 
@@ -158,6 +159,8 @@ curl --include \
 }
 
 ```
+
+### Reset your password
 
 Provide your username to request an email be sent to you with password reset instructions.  
 
@@ -214,6 +217,7 @@ curl --include \
 "name":"ISONE Western/Central Massachusetts"
 }
 ```
+### Endpoint: Determine Region
 
 This endpoint provides a latitude/longitude pair to determine which grid region covers a given location.
 
