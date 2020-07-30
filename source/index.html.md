@@ -12,7 +12,7 @@ code_clipboard: true
 
 # Introduction
 
-(.html) The WattTime API provides access to realtime marginal emissions data for electric grids around the world.  
+The WattTime API provides access to realtime marginal emissions data for electric grids around the world.  
 
 You can access the API by sending standard HTTP requests to the endpoints listed below. Certain endpoints are only available to subscribers.  
 
