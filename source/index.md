@@ -12,15 +12,17 @@ code_clipboard: true
 
 # Introduction
 
-The WattTime API provides access to realtime marginal emissions data for electric grids around the world.  
+The WattTime API provides access to realtime marginal emissions data for electric grids around the world. Say what a MOER is…  
 
-You can access the API by sending standard HTTP requests to the endpoints listed below. Certain endpoints are only available to subscribers.  
-
-To start using the API, first register for an account, then log in to obtain an access token. You can then use your access token to access the remainder of our endpoints. Your access token will expire eventually and you'll need to sign in again to obtain a fresh access token.  
+Define some key terms...  BA, MOER, Marginal, Realtime, Forecast. Provide links to background reading...
+  
+You can access the API by sending standard HTTP requests to the endpoints listed below. The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers.
+  
+To start using the API, first register for an account, then log in to obtain an access token. You can then use your access token to access the remainder of our endpoints. Your access token will expire after 30 minutes and you'll need to sign in again to obtain a fresh access token.  
 
 There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second.  If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.
 
-For example (Python3) code that can be used to register, log in, and query data, please see [our example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
+For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
 
 
 # Authentication
@@ -411,12 +413,11 @@ Content-Type:application/zip
 
 Obtain a zip file containing the MOER values and timestamps for a given region for (up to) the past two years.  
 
-Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions.  
-
 WattTime periodically updates the algorithms used to calculate new MOERs to add new features, incorporate new data sources, or in response to changing grid dynamics. This endpoint provides you with the option to retrieve all the MOER versions published for a given region or to retrieve only the most up-to-date version.  
 
-Historical data will be updated on the 2nd of each month at midnight UTC for the previous month.  
-
+Historical data will be updated on the 2nd of each month at midnight UTC for the previous month. 
+  
+Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions.  
 
 <aside class="success">
 Please note that this endpoint will return binary data (representing a zip file) which needs to be saved to disk and then unzipped (or unzipped programmatically) in order to obtain human readable csv files containing the MOER values.
@@ -492,6 +493,8 @@ curl --include \
 Obtain MOER forecast data for a given region. Omitting the starttime and endtime parameters will return the most recently generated forecast for a given region. Use the starttime and endtime parameters to obtain historical forecast data.  
 
 Note that starttime and endtime define the time when a forecast was **generated**. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast generated at 1:00, and the forecast generated at 1:05 on January 1.  
+  
+Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions.
 
 <aside class="success">
 Historical forecast queries are limited to a maximum time span of 1 day. If you want to query more data than that, please break up your request into multiple queries.
