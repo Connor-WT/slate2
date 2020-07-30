@@ -5,14 +5,6 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - python
   - shell
 
-
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
-
 search: true
 
 code_clipboard: true
@@ -33,7 +25,9 @@ For example (Python3) code that can be used to register, log in, and query data,
 
 # Authentication
 
-## Register
+To access the data, first use the `/register` endpoint to register your username and password. Then use the `/login` endpoint to obtain a token. WattTime expects a token to be included in all API requests to the server.
+
+## Create New User Account
 
 > To register, use this code:
 
@@ -49,19 +43,8 @@ print(rsp.text)
 ```
 
 ```shell
-curl --include \
-     --request POST \
-     --header "Content-Type: application/json" \
-     --data-binary "{
-    \"username\": \"freddo\",
-    \"password\": \"the_frog\",
-    \"email\": \"freddo@frog.com\",
-    \"org\": \"fred\'s world\"
-}" \
-'https://api2.watttime.org/v2/register'
+curl -H "Content-type: application/json" --data-binary '{"username":"freddo", "password":"the_frog", "email":"freddo@frog.org", "org":"freds world"}' https://api2.watttime.org/v2/register
 ```
-
-> Make sure to only register once!
 
 > The above command returns JSON structured like this:
 
@@ -72,13 +55,9 @@ curl --include \
 }
 ```
 
-### Create new user account
+### `/register`
 
-WattTime uses API keys to allow access to the API. You can register a new WattTime API key by providing basic information to create an account.
-
-WattTime expects for the API key to be included in all API requests to the server in a header that looks like the following:  
-
-`Authorization: eyJhbGciI1NiIsInR5cCI6IkpXVCJ9…`
+Provide basic information to self register for an account. Higher level access is via subscription and can be requested at `support@watttime.org`.
 
 ### HTTP Request
 
@@ -91,13 +70,13 @@ Parameter | Description | Example | Type
 username (required) | name of user that will be used in subsequent calls | freddo | string 
 password (required) | user password | the_frog | string
 email (required) | valid email address | freddo@frog.org | string
-organization (required) | organization name | freds world | string
+organization | organization name | freds world | string
 
 <aside class="success">
-Remember — add note here 
+Make sure to only register once! 
 </aside>
 
-## Log In
+## Obtain Access Token
 
 > To register, use this code:
 
@@ -110,29 +89,40 @@ print(rsp.json())
 ```
 
 ```shell
-curl --include \
-     --header "Authorization: Basic <base64 encoded username:password>" \
-  'https://api2.watttime.org/v2/login/'
+curl --basic -u USERNAME:PASSWORD https://api2.watttime.org/v2/login
 ```
 
-> The above command returns your personal API key, in JSON structure like this:
+> The above command returns your personal token, in JSON structure like this:
 
 ```json
 {
-  "token": "eyJhbGciI1NiIsInR5cCI6IkpXVCJ9…."
+  "token": "abcdef0123456789fedcabc"
 }
 
 ```
-### Obtain access token
+### `/login`
 
-Use HTTP basic auth to exchange your registered username and password for an Access Token. 
+Use HTTP basic auth to exchange username and password for an access token. Tokens are used in all subsequent data calls. 
 
 ### HTTP Request
 
 `GET https://api2.watttime.org/v2/login/`
 
+### URL Query Parameters
+
+Parameter | Description
+--------- | -----------
+none | uses basic authentication 
+
+### Response
+
+Attribute | Description
+--------- | -----------
+token | abcdef0123456789fedcabc 
+
 <aside class="success">
-Remember — token expires after 30 minutes. 
+Token expires after 30 minutes. If a data call returns 401, you will need to login again to receive a new token.
+
 </aside>
 
 ## Password Reset
@@ -147,8 +137,7 @@ print(rsp.json())
 ```
 
 ```shell
-curl --include \
-'https://api2.watttime.org/v2/password/?username='
+curl "https://api2.watttime.org/v2/password/?username=USERNAME"
 ```
 
 > Sample Response:
@@ -160,7 +149,7 @@ curl --include \
 
 ```
 
-### Reset your password
+### `/password`
 
 Provide your username to request an email be sent to you with password reset instructions.  
 
@@ -178,11 +167,8 @@ username | freddo | string
 
 Attribute | Description | Type
 --------- | ----------- | ----
-"ok" | message confirming reset link has been sent | string 
+"ok" | Message confirming reset link has been sent | string 
 
-<aside class="success">
-Remember — add helpful note here 
-</aside>
 
 # Grid Emissions Information
 
@@ -203,9 +189,7 @@ print(rsp.text)
 ```
 
 ```shell
-curl --include \
-     --header "Authorization: Bearer <Access_Token>" \
-  'https://api2.watttime.org/v2/ba-from-loc/?latitude=&longitude='
+curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.org/v2/ba-from-loc?latitude=42.372&longitude=-72.519
 ```
 
 > Sample Response
@@ -217,13 +201,11 @@ curl --include \
 "name":"ISONE Western/Central Massachusetts"
 }
 ```
-### Endpoint: Determine Region
+### `/ba-from-loc`
 
-This endpoint provides a latitude/longitude pair to determine which grid region covers a given location.
-
-<aside class="success">
-Note — See map coverage for available grid regions.
-</aside>
+This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an "Invalid Coordinates" error if the point lays outside of known BAs.  
+    
+See [map coverage] (https://www.watttime.org/explorer/#3/41.23/-97.64) for available grid regions.
 
 ### HTTP Request
 
@@ -235,6 +217,10 @@ Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
 latitude | Latitude of location | 42.372 | float 
 longitude | Longitude of location | -72.519 | float
+
+<aside class="warning">
+Locations not associated with a known balancing authority will return a <code>HTTP code 400</code>.
+</aside>
 
 ### Response
 
@@ -262,9 +248,7 @@ print(rsp.text)
 ```
 
 ```shell
-curl --include \
-     --header "Authorization: Bearer <Access_Token>" \
-  'https://api2.watttime.org/v2/index/?latitude=&longitude=&style='
+curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.org/v2/index?ba=CAISO_ZP26&style=all
 ```
 
 > Sample Response
@@ -278,17 +262,16 @@ curl --include \
     "point_time": "2019-01-29T14:55:00.00Z",
 }
 ```
-### Endpoint: Index
+### `/index`
 
-Obtain a realtime measurement of how clean or dirty electricity in a given region is right now.
-The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. The type of value returned is set by the 'style' query parameter.
-
-<aside class="success">
-Please use this endpoint for all realtime emissions queries and do not use the /data endpoint for this purpose unless required.
-</aside>
+Provides a realtime measurement of how clean or dirty electricity in a given region is right now.
+The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. This value is returned along with a ‘freq’ value, indicating how long the value is in effect. The type of value returned is set by the 'style' query parameter.
 
 <aside class="success">
-For retrieving historical emissions rates, we recommend using raw MOER values from the /data or /historical endpoints.
+Please use this endpoint for all realtime emissions queries and do not use the <code>/data</code> endpoint for this purpose unless required.  
+<br/>
+<br/>
+For retrieving historical emissions rates, we recommend using raw MOER values from the <code>/data</code> or <code>/historical</code> endpoints.
 </aside>
 
 ### HTTP Request
@@ -308,7 +291,7 @@ style | Units in which to provide realtime marginal emissions. Choices are perce
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-freq | Duration from point_time for when new value is expected | 300 | string 
+freq | Duration from point_time for when new value is expected (in seconds) | 300 | string 
 ba | Region abbreviation | CAISO_ZP26 | string 
 percent | An integer between 0 (clean) and 100 (dirty) representing the relative realtime marginal emissions intensity | 53 | integer 
 moer | Marginal Operating Emissions Rate (MOER) measured in lbs CO2/MWh. This is only available for PRO subscriptions | 850.743 | float
@@ -333,9 +316,7 @@ print(rsp.text)
 ```
 
 ```shell
-curl --include \
-     --header "Authorization: Bearer <Access_Token>" \
-  'https://api2.watttime.org/v2/data/?ba=&latitude=&longitude=&starttime=&endtime=&style=&moerversion='
+curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.org/v2/data?ba=CAISO_NP15&starttime=2019-02-20T16:00:00-0800&endtime=2019-02-20T16:15:00-0800
 ```
 
 > Sample Response
@@ -348,14 +329,20 @@ curl --include \
 {"point_time": "2019-02-21T00:00:00.000Z", "value": 844, "frequency": 300, "market": "RTM", "ba": "CAISO_ZP26", "datatype": "MOER", "version": "2.1.1"}
 ]
 ```
-### Endpoint: Data
+### `/data`
 
-Obtain historical marginal emissions for a given area or location.  
+Obtain historical marginal emissions for a given area (balancing authority abbreviated code) or location (latitude/longitude pair).  
   
-Access to this endpoint is generally restricted to customers with PRO subscriptions. However, you can preview the data provided by using grid region CAISO_ZP26 for your requests.
+Access to this endpoint is generally restricted to customers with PRO subscriptions. However, you can preview the data provided by using grid region `CAISO_ZP26` for your requests.
 
 <aside class="success">
-Individual queries are limited to 30 days of data. If you need to download multiple months or years of data, consider using the /historical endpoint or request multiple days of data for each query (do not query every 5-minute datapoint individually).
+Individual queries are limited to 30 days of data. If you need to download multiple months or years of data, consider using the <code>/historical</code> endpoint or request multiple days of data for each query (do not query every 5-minute datapoint individually).
+<br/>
+<br/>
+Provide <code>ba</code> OR provide <code>latitude+longitude</code>, not all three. If all are supplied, only the <code>ba</code> value is used. 
+<br/>
+<br/>
+Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</code> format.  Generally <code>ISO8601</code> formats are preferred.
 </aside>
 
 ### HTTP Request
@@ -366,7 +353,7 @@ Individual queries are limited to 30 days of data. If you need to download multi
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Region abbreviation. Optional - provide ba OR provide latitude+longitude, not all three | CAISO_ZP26 | string 
+ba | Balancing authority abbreviation, the "abbrev" value returned from ba-from-loc | CAISO_ZP26 | string 
 latitude | Latitude of location | 42.372 | float 
 longitude | Longitude of location | -72.519 | float
 starttime | ISO 8601 timestamp (inclusive) - may be omitted if endtime is also omitted. If both are omitted, returns the most recent data points. | 2019-02-20T16:00:00-0800 | string
@@ -412,10 +399,7 @@ print('Wrote historical data for {} to {}'.format(ba, file_path))
 ```
 
 ```shell
-curl --include \
-     --header "Authorization: Bearer <Access_Token>" \
-     --header "Accept: application/zip" \
-  'https://api2.watttime.org/v2/historical/?ba=&version='
+curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.org/v2/historical?ba=CAISO_NP15&version=latest
 ```
 
 > Sample Response
@@ -423,7 +407,7 @@ curl --include \
 ```json
 Content-Type:application/zip
 ```
-### Endpoint: Historical
+### `/historical`
 
 Obtain a zip file containing the MOER values and timestamps for a given region for (up to) the past two years.  
 
@@ -503,14 +487,14 @@ curl --include \
   }
 ]
 ```
-### Endpoint: Forecast
+### `/forecast`
 
 Obtain MOER forecast data for a given region. Omitting the starttime and endtime parameters will return the most recently generated forecast for a given region. Use the starttime and endtime parameters to obtain historical forecast data.  
 
-Note that starttime and endtime define the time when a forecast was GENERATED. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast generated at 1:00, and the forecast generated at 1:05 on January 1.  
+Note that starttime and endtime define the time when a forecast was **generated**. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast generated at 1:00, and the forecast generated at 1:05 on January 1.  
 
 <aside class="success">
-Historical forecast queries are limited to a maximum time span of 1 day - so if you want to query more data than that, please break up your request into multiple queries.
+Historical forecast queries are limited to a maximum time span of 1 day. If you want to query more data than that, please break up your request into multiple queries.
 </aside>
 
 ### HTTP Request
@@ -541,9 +525,5 @@ ba | Region abbreviation | CAISO_ZP26 | string
 point_time | ISO8601 UTC date/time format indicating when this data became valid | 2019-01-29T14:55:00.00Z | string
 value | Number value of data (corresponding to datatype above) | 909.06 | float 
 version | MOER version (Not present and not applicable for other datatypes) | 2.0 | string 
-
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-
-
+  
+    
