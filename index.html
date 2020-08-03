@@ -308,6 +308,11 @@
       <ul id="toc" class="toc-list-h1">
           <li>
             <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#restrictions" class="toc-h2 toc-link" data-title="Restrictions">Restrictions</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
@@ -349,19 +354,17 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>The WattTime API provides access to realtime marginal emissions data for electric grids around the world. Say what a MOER is…  </p>
+<p>WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into the electricity grid’s marginal emissions rate. </p>
 
-<p>Define some key terms...  BA, MOER, Marginal, Realtime, Forecast. Provide links to background reading...</p>
+<p>The WattTime API provides access to realtime marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/">What is AER</a> and <a href="https://www.watttime.org/aer/how-aer-works/">How AER works</a>.</p>
 
 <p>You can access the API by sending standard HTTP requests to the endpoints listed below. The <code>/data</code>, <code>/historical</code>, and <code>/forecast</code> endpoints are only available to subscribers.</p>
 
-<p>To start using the API, first register for an account, then log in to obtain an access token. You can then use your access token to access the remainder of our endpoints. Your access token will expire after 30 minutes and you&#39;ll need to sign in again to obtain a fresh access token.  </p>
-
-<p>There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second.  If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.</p>
-
 <p>For (Python3) example code that can be used to register, log in, and query data, please see our <a href="https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py">example code</a>.</p>
+<h3 id='restrictions'>Restrictions</h3>
+<p>There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.</p>
 <h1 id='authentication'>Authentication</h1>
-<p>To access the data, first use the <code>/register</code> endpoint to register your username and password. Then use the <code>/login</code> endpoint to obtain a token. WattTime expects a token to be included in all API requests to the server.</p>
+<p>To start using the API, first register for an account by using the <code>/register</code> endpoint. Then use the <code>/login</code> endpoint to obtain an access token. You can then use your access token to access the remainder of our endpoints. WattTime expects a token to be included in all API requests to the server. Your access token will expire after 30 minutes and you&#39;ll need to sign in again to obtain a fresh access token.</p>
 <h2 id='create-new-user-account'>Create New User Account</h2>
 <blockquote>
 <p>To register, use this code:</p>
@@ -547,7 +550,7 @@ Token expires after 30 minutes. If a data call returns 401, you will need to log
 </span><span class="nl">"name"</span><span class="p">:</span><span class="s2">"ISONE Western/Central Massachusetts"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div><h3 id='ba-from-loc'><code>/ba-from-loc</code></h3>
-<p>This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an &quot;Invalid Coordinates&quot; error if the point lays outside of known BAs.  </p>
+<p>This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an &quot;Invalid Coordinates&quot; error if the point lies outside of known BAs. For more information on what a balancing authority is, see <a href="https://www.eia.gov/todayinenergy/detail.php?id=27152">this explanation</a> from the EIA.</p>
 
 <p>See <a href="https://www.watttime.org/explorer/#3/41.23/-97.64">map coverage</a> for available grid regions.</p>
 <h3 id='http-request-4'>HTTP Request</h3>
@@ -719,7 +722,7 @@ For retrieving historical emissions rates, we recommend using raw MOER values fr
 <span class="kn">from</span> <span class="nn">requests.auth</span> <span class="kn">import</span> <span class="n">HTTPBasicAuth</span>
 
 <span class="n">login_url</span> <span class="o">=</span> <span class="s">'https://api2.watttime.org/v2/login'</span>
-<span class="n">token</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s">'connor_watttime'</span><span class="p">,</span> <span class="s">'guest_watttime'</span><span class="p">)).</span><span class="n">json</span><span class="p">()[</span><span class="s">'token'</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">HTTPBasicAuth</span><span class="p">(</span><span class="s">'USERNAME'</span><span class="p">,</span> <span class="s">'PASSWORD'</span><span class="p">)).</span><span class="n">json</span><span class="p">()[</span><span class="s">'token'</span><span class="p">]</span>
 
 <span class="n">data_url</span> <span class="o">=</span> <span class="s">'https://api2.watttime.org/v2/data'</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'Bearer {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">token</span><span class="p">)}</span>
