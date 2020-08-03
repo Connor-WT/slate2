@@ -12,22 +12,21 @@ code_clipboard: true
 
 # Introduction
 
-The WattTime API provides access to realtime marginal emissions data for electric grids around the world. Say what a MOER is…  
+WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into the electricity grid’s marginal emissions rate. 
 
-Define some key terms...  BA, MOER, Marginal, Realtime, Forecast. Provide links to background reading...
+The WattTime API provides access to realtime marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
   
 You can access the API by sending standard HTTP requests to the endpoints listed below. The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers.
-  
-To start using the API, first register for an account, then log in to obtain an access token. You can then use your access token to access the remainder of our endpoints. Your access token will expire after 30 minutes and you'll need to sign in again to obtain a fresh access token.  
-
-There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second.  If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.
 
 For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
+
+### Restrictions
+There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.
 
 
 # Authentication
 
-To access the data, first use the `/register` endpoint to register your username and password. Then use the `/login` endpoint to obtain a token. WattTime expects a token to be included in all API requests to the server.
+To start using the API, first register for an account by using the `/register` endpoint. Then use the `/login` endpoint to obtain an access token. You can then use your access token to access the remainder of our endpoints. WattTime expects a token to be included in all API requests to the server. Your access token will expire after 30 minutes and you'll need to sign in again to obtain a fresh access token.
 
 ## Create New User Account
 
@@ -205,7 +204,8 @@ curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.or
 ```
 ### `/ba-from-loc`
 
-This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an "Invalid Coordinates" error if the point lays outside of known BAs.  
+This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an "Invalid Coordinates" error if the point lies outside of known BAs. For more information on what a balancing authority is, see [this explanation] (https://www.eia.gov/todayinenergy/detail.php?id=27152) from the EIA.
+
     
 See [map coverage] (https://www.watttime.org/explorer/#3/41.23/-97.64) for available grid regions.
 
@@ -306,7 +306,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 login_url = 'https://api2.watttime.org/v2/login'
-token = requests.get(login_url, auth=HTTPBasicAuth('connor_watttime', 'guest_watttime')).json()['token']
+token = requests.get(login_url, auth=HTTPBasicAuth('USERNAME', 'PASSWORD')).json()['token']
 
 data_url = 'https://api2.watttime.org/v2/data'
 headers = {'Authorization': 'Bearer {}'.format(token)}
