@@ -175,6 +175,8 @@ Attribute | Description | Type
 
 ## Determine Grid Region
 
+> Note - Make sure to add in your registered USERNAME and PASSWORD to this code. You should not add in a previous token here, as the code automatically generates a new one each time you run it.
+
 ```python
 import requests
 from requests.auth import HTTPBasicAuth
@@ -287,7 +289,7 @@ Parameter | Description | Example | Type
 ba | Region abbreviation. Optional - provide ba OR provide latitude+longitude, not all three | CAISO_ZP26 | string 
 latitude | Latitude of location | 42.372 | float 
 longitude | Longitude of location | -72.519 | float
-style | Units in which to provide realtime marginal emissions. Choices are percent, moer or all. If you have PROaccess you may use moer to get the latest raw MOER value. Defaults to all if not provided | all | string
+style | Units in which to provide realtime marginal emissions. **Choices are 'percent', 'moer' or 'all'**. If you have PRO access you may use 'moer' to get the latest raw MOER value. Defaults to 'all' if not provided | all | string
 
 ### Response
 
