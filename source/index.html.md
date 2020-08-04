@@ -16,17 +16,17 @@ WattTime technology—based on real-time grid data, cutting-edge algorithms, and
 
 The WattTime API provides access to realtime marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
   
-You can access the API by sending standard HTTP requests to the endpoints listed below. The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers.
+You can access the API by sending standard HTTP requests to the endpoints listed below. 
 
 For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
 
 ### Restrictions
-There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an HTTP 429 error code returned.
+The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an `HTTP 429` error code returned.
 
 
 # Authentication
 
-To start using the API, first register for an account by using the `/register` endpoint. Then use the `/login` endpoint to obtain an access token. You can then use your access token to access the remainder of our endpoints. WattTime expects a token to be included in all API requests to the server. Your access token will expire after 30 minutes and you'll need to sign in again to obtain a fresh access token.
+To start using the API, first register for an account by using the `/register` endpoint. Then use the `/login` endpoint to obtain an access token. You can then use your token to access the remainder of our endpoints. WattTime expects a token to be included in all API requests to the server. Your access token will expire after 30 minutes and you'll need to sign in again to obtain a fresh one.
 
 ## Create New User Account
 
@@ -175,7 +175,7 @@ Attribute | Description | Type
 
 ## Determine Grid Region
 
-> Note - Make sure to add in your registered USERNAME and PASSWORD to this code. You should not add in a previous token here, as the code automatically generates a new one each time you run it.
+> Make sure to add in your registered USERNAME and PASSWORD to this code. You should not add in your token here. The code automatically generates a new token each time you run it.
 
 ```python
 import requests
