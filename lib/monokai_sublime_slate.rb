@@ -25,7 +25,7 @@ module Rouge
         palette :soft_yellow    => '#fff94f'
         palette :very_dark      => '#1e0010'
         palette :whitish        => '#f8f8f2'
-        palette :orange         => '#f6aa11'
+        palette :orange         => '#1fe810'
         palette :white          => '#ffffff'
 
         style Generic::Heading,                 :fg => :grey
