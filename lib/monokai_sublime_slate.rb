@@ -22,7 +22,7 @@ module Rouge
         palette :light_grey     => '#aaaaaa'
         palette :light_violet   => '#ae81ff'
         palette :soft_cyan      => '#66d9ef'
-        palette :soft_yellow    => '#fffb87'
+        palette :soft_yellow    => '#fff83b'
         palette :very_dark      => '#1e0010'
         palette :whitish        => '#f8f8f2'
         palette :orange         => '#1fe810'
