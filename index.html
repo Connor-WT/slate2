@@ -355,15 +355,17 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into the electricity grid’s marginal emissions rate. </p>
+<p>WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into your local electricity grid’s marginal emissions rate. </p>
 
-<p>The WattTime API provides access to realtime marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/">What is AER</a> and <a href="https://www.watttime.org/aer/how-aer-works/">How AER works</a>.</p>
+<p>The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/">What is AER</a> and <a href="https://www.watttime.org/aer/how-aer-works/">How AER works</a>.</p>
 
 <p>You can access the API by sending standard HTTP requests to the endpoints listed below. </p>
 
+<p>The <code>/data</code>, <code>/historical</code>, and <code>/forecast</code> endpoints are only available to subscribers. ANALYST and PRO data plans can be found <a href="https://www.watttime.org/get-the-data/data-plans/">here</a>.</p>
+
 <p>For (Python3) example code that can be used to register, log in, and query data, please see our <a href="https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py">example code</a>.</p>
 <h3 id='restrictions'>Restrictions</h3>
-<p>The <code>/data</code>, <code>/historical</code>, and <code>/forecast</code> endpoints are only available to subscribers. There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an <code>HTTP 429</code> error code returned.</p>
+<p>There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an <code>HTTP 429</code> error code returned.</p>
 <h1 id='authentication'>Authentication</h1>
 <p>To start using the API, first register for an account by using the <code>/register</code> endpoint. Then use the <code>/login</code> endpoint to obtain an access token. You can then use your token to access the remainder of our endpoints. WattTime expects a token to be included in all API requests to the server. Your access token will expire after 30 minutes and you&#39;ll need to sign in again to obtain a fresh one.</p>
 <h2 id='create-new-user-account'>Create New User Account</h2>
@@ -596,8 +598,8 @@ Locations not associated with a known balancing authority will return a <code>HT
 </tr>
 </thead><tbody>
 <tr>
-<td>abbrev</td>
-<td>Region abbreviation</td>
+<td>ba</td>
+<td>Balancing authority abbreviation</td>
 <td>NYISO</td>
 <td>string</td>
 </tr>
@@ -638,13 +640,15 @@ Locations not associated with a known balancing authority will return a <code>HT
     </span><span class="nl">"point_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-01-29T14:55:00.00Z"</span><span class="p">,</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div><h3 id='index'><code>/index</code></h3>
-<p>Provides a realtime measurement of how clean or dirty electricity in a given region is right now.
-The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. This value is returned along with a ‘freq’ value, indicating how long the value is in effect. The type of value returned is set by the &#39;style&#39; query parameter.</p>
+<p>Provides a real-time signal indicating the carbon intensity on the local grid in that moment (typically updated every 5 minutes). The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. This value is returned along with a ‘freq’ value, indicating how long the value is in effect. The type of value returned is set by the &#39;style&#39; query parameter.  </p>
+
+<p>The <em>MOER</em> value is the lbs of CO2 per MWh produced on the grid in the specified region. The reported index <em>percent</em> is where the current MOER is between the min and max from the last two weeks. </p>
 
 <aside class="success">
-Please use this endpoint for all realtime emissions queries and do not use the <code>/data</code> endpoint for this purpose unless required.  
-<br/>
-<br/>
+Please use this endpoint for all real-time emissions queries and do not use the <code>/data</code> endpoint for this purpose unless required.  
+</aside>
+
+<aside class="success">
 For retrieving historical emissions rates, we recommend using raw MOER values from the <code>/data</code> or <code>/historical</code> endpoints.
 </aside>
 <h3 id='http-request-5'>HTTP Request</h3>
@@ -660,7 +664,7 @@ For retrieving historical emissions rates, we recommend using raw MOER values fr
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Region abbreviation. Optional - provide ba OR provide latitude+longitude, not all three</td>
+<td>Balancing authority abbreviation. Optional - provide ba OR provide latitude+longitude, not all three</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
 </tr>
@@ -700,15 +704,21 @@ For retrieving historical emissions rates, we recommend using raw MOER values fr
 </tr>
 <tr>
 <td>ba</td>
-<td>Region abbreviation</td>
+<td>Balancing authority abbreviation</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
 </tr>
 <tr>
 <td>percent</td>
-<td>An integer between 0 (clean) and 100 (dirty) representing the relative realtime marginal emissions intensity</td>
+<td>An integer between 0 (minimum MOER in the last two weeks i.e. clean) and 100 (maximum MOER in the last two weeks</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>i.e. dirty) representing the relative realtime marginal emissions intensity.</td>
 <td>53</td>
 <td>integer</td>
+<td></td>
 </tr>
 <tr>
 <td>moer</td>
@@ -750,16 +760,18 @@ For retrieving historical emissions rates, we recommend using raw MOER values fr
 </span></code></pre></div><h3 id='data'><code>/data</code></h3>
 <p>Obtain historical marginal emissions for a given area (balancing authority abbreviated code) or location (latitude/longitude pair).  </p>
 
-<p>Access to this endpoint is generally restricted to customers with PRO subscriptions. However, you can preview the data provided by using grid region <code>CAISO_ZP26</code> for your requests.</p>
+<p>Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions. However, you can preview the data provided by using grid region <code>CAISO_ZP26</code> for your requests.</p>
 
 <aside class="success">
 Individual queries are limited to 30 days of data. If you need to download multiple months or years of data, consider using the <code>/historical</code> endpoint or request multiple days of data for each query (do not query every 5-minute datapoint individually).
-<br/>
-<br/>
+</aside>
+
+<aside class="success">
 Provide <code>ba</code> OR provide <code>latitude+longitude</code>, not all three. If all are supplied, only the <code>ba</code> value is used. 
-<br/>
-<br/>
-Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</code> format.  Generally <code>ISO8601</code> formats are preferred.
+</aside>
+
+<aside class="success">
+Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</code> format. Generally <code>ISO8601</code> formats are preferred.
 </aside>
 <h3 id='http-request-6'>HTTP Request</h3>
 <p><code>GET https://api2.watttime.org/v2/data/?ba=CAISO_ZP26&amp;latitude=35.0&amp;longitude=120.0&amp;starttime=2019-02-20T16:00:00-0800&amp;endtime=2019-02-20T16:15:00-0800&amp;style=all&amp;moerversion=2.1.1</code></p>
@@ -774,7 +786,7 @@ Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</co
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Balancing authority abbreviation, the &quot;abbrev&quot; value returned from ba-from-loc</td>
+<td>Balancing authority abbreviation</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
 </tr>
@@ -792,7 +804,7 @@ Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</co
 </tr>
 <tr>
 <td>starttime</td>
-<td>ISO 8601 timestamp (inclusive) - may be omitted if endtime is also omitted. If both are omitted, returns the most recent data points.</td>
+<td>ISO 8601 timestamp (inclusive) - may be omitted if endtime is also omitted. If both are omitted, returns the most recent data point.</td>
 <td>2019-02-20T16:00:00-0800</td>
 <td>string</td>
 </tr>
@@ -826,15 +838,9 @@ Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</co
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Region abbreviation</td>
+<td>Balancing authority abbreviation</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
-</tr>
-<tr>
-<td>percent</td>
-<td>An integer between 0 (clean) and 100 (dirty) representing the relative realtime marginal emissions intensity</td>
-<td>53</td>
-<td>integer</td>
 </tr>
 <tr>
 <td>datatype</td>
@@ -922,7 +928,7 @@ Please note that this endpoint will return binary data (representing a zip file)
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Region abbreviation</td>
+<td>Balancing authority abbreviation</td>
 <td>MISO_MI</td>
 <td>string</td>
 </tr>
@@ -988,9 +994,9 @@ Please note that this endpoint will return binary data (representing a zip file)
 </span></code></pre></div><h3 id='forecast'><code>/forecast</code></h3>
 <p>Obtain MOER forecast data for a given region. Omitting the starttime and endtime parameters will return the most recently generated forecast for a given region. Use the starttime and endtime parameters to obtain historical forecast data.  </p>
 
-<p>Note that starttime and endtime define the time when a forecast was <strong>generated</strong>. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast generated at 1:00, and the forecast generated at 1:05 on January 1.  </p>
+<p>Note that starttime and endtime define the time when a forecast was <strong>generated</strong>. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast (all 288 values in the forecast window) generated at 1:00, and the forecast generated at 1:05 on January 1.  </p>
 
-<p>Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions.</p>
+<p>Access to this endpoint is restricted to customers with PRO subscriptions.</p>
 
 <aside class="success">
 Historical forecast queries are limited to a maximum time span of 1 day. If you want to query more data than that, please break up your request into multiple queries.
@@ -1008,7 +1014,7 @@ Historical forecast queries are limited to a maximum time span of 1 day. If you 
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Region abbreviation</td>
+<td>Balancing authority abbreviation</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
 </tr>
@@ -1060,7 +1066,7 @@ Historical forecast queries are limited to a maximum time span of 1 day. If you 
 </thead><tbody>
 <tr>
 <td>ba</td>
-<td>Region abbreviation</td>
+<td>Balancing authority abbreviation</td>
 <td>CAISO_ZP26</td>
 <td>string</td>
 </tr>
@@ -1072,7 +1078,7 @@ Historical forecast queries are limited to a maximum time span of 1 day. If you 
 </tr>
 <tr>
 <td>value</td>
-<td>Number value of data (corresponding to datatype above)</td>
+<td>MOER value (corresponding to datatype above)</td>
 <td>909.06</td>
 <td>float</td>
 </tr>
