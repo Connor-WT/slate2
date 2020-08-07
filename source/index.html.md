@@ -12,16 +12,18 @@ code_clipboard: true
 
 # Introduction
 
-WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into the electricity grid’s marginal emissions rate. 
+WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into your local electricity grid’s marginal emissions rate. 
 
-The WattTime API provides access to realtime marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
+The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
   
 You can access the API by sending standard HTTP requests to the endpoints listed below. 
+
+The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. ANALYST and PRO data plans can be found [here] (https://www.watttime.org/get-the-data/data-plans/).
 
 For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
 
 ### Restrictions
-The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an `HTTP 429` error code returned.
+There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an `HTTP 429` error code returned.
 
 
 # Authentication
@@ -230,7 +232,7 @@ Locations not associated with a known balancing authority will return a <code>HT
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-abbrev | Region abbreviation | NYISO | string 
+ba | Balancing authority abbreviation | NYISO | string 
 id | Unique id for the region | 8 | integer
 name | Human readable name/description for the region | New York ISO | string
 
@@ -268,13 +270,15 @@ curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.or
 ```
 ### `/index`
 
-Provides a realtime measurement of how clean or dirty electricity in a given region is right now.
-The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. This value is returned along with a ‘freq’ value, indicating how long the value is in effect. The type of value returned is set by the 'style' query parameter.
+Provides a real-time signal indicating the carbon intensity on the local grid in that moment (typically updated every 5 minutes). The current emissions rate of the grid is returned as a raw Marginal Operating Emissions Rate (MOER) value (available only to users with PRO subscriptions), or as an index value (percent), which is available to all users. This value is returned along with a ‘freq’ value, indicating how long the value is in effect. The type of value returned is set by the 'style' query parameter.  
+
+The *MOER* value is the lbs of CO2 per MWh produced on the grid in the specified region. The reported index *percent* is where the current MOER is between the min and max from the last two weeks. 
 
 <aside class="success">
-Please use this endpoint for all realtime emissions queries and do not use the <code>/data</code> endpoint for this purpose unless required.  
-<br/>
-<br/>
+Please use this endpoint for all real-time emissions queries and do not use the <code>/data</code> endpoint for this purpose unless required.  
+</aside>
+
+<aside class="success">
 For retrieving historical emissions rates, we recommend using raw MOER values from the <code>/data</code> or <code>/historical</code> endpoints.
 </aside>
 
@@ -286,7 +290,7 @@ For retrieving historical emissions rates, we recommend using raw MOER values fr
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Region abbreviation. Optional - provide ba OR provide latitude+longitude, not all three | CAISO_ZP26 | string 
+ba | Balancing authority abbreviation. Optional - provide ba OR provide latitude+longitude, not all three | CAISO_ZP26 | string 
 latitude | Latitude of location | 42.372 | float 
 longitude | Longitude of location | -72.519 | float
 style | Units in which to provide realtime marginal emissions. **Choices are 'percent', 'moer' or 'all'**. If you have PRO access you may use 'moer' to get the latest raw MOER value. Defaults to 'all' if not provided | all | string
@@ -296,8 +300,9 @@ style | Units in which to provide realtime marginal emissions. **Choices are 'pe
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
 freq | Duration from point_time for when new value is expected (in seconds) | 300 | string 
-ba | Region abbreviation | CAISO_ZP26 | string 
-percent | An integer between 0 (clean) and 100 (dirty) representing the relative realtime marginal emissions intensity | 53 | integer 
+ba | Balancing authority abbreviation | CAISO_ZP26 | string 
+percent | An integer between 0 (minimum MOER in the last two weeks i.e. clean) and 100 (maximum MOER in the last two weeks
+i.e. dirty) representing the relative realtime marginal emissions intensity. | 53 | integer 
 moer | Marginal Operating Emissions Rate (MOER) measured in lbs CO2/MWh. This is only available for PRO subscriptions | 850.743 | float
 point_time | ISO8601 UTC date/time format indicating when this data became valid | 2019-01-29T14:55:00.00Z | string
 
@@ -337,16 +342,18 @@ curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.or
 
 Obtain historical marginal emissions for a given area (balancing authority abbreviated code) or location (latitude/longitude pair).  
   
-Access to this endpoint is generally restricted to customers with PRO subscriptions. However, you can preview the data provided by using grid region `CAISO_ZP26` for your requests.
+Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions. However, you can preview the data provided by using grid region `CAISO_ZP26` for your requests.
 
 <aside class="success">
 Individual queries are limited to 30 days of data. If you need to download multiple months or years of data, consider using the <code>/historical</code> endpoint or request multiple days of data for each query (do not query every 5-minute datapoint individually).
-<br/>
-<br/>
+</aside>
+
+<aside class="success">
 Provide <code>ba</code> OR provide <code>latitude+longitude</code>, not all three. If all are supplied, only the <code>ba</code> value is used. 
-<br/>
-<br/>
-Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</code> format.  Generally <code>ISO8601</code> formats are preferred.
+</aside>
+
+<aside class="success">
+Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</code> format. Generally <code>ISO8601</code> formats are preferred.
 </aside>
 
 ### HTTP Request
@@ -357,10 +364,10 @@ Starttime/endtime values are in <code>ISO8601</code> format or <code>RFC2822</co
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Balancing authority abbreviation, the "abbrev" value returned from ba-from-loc | CAISO_ZP26 | string 
+ba | Balancing authority abbreviation | CAISO_ZP26 | string 
 latitude | Latitude of location | 42.372 | float 
 longitude | Longitude of location | -72.519 | float
-starttime | ISO 8601 timestamp (inclusive) - may be omitted if endtime is also omitted. If both are omitted, returns the most recent data points. | 2019-02-20T16:00:00-0800 | string
+starttime | ISO 8601 timestamp (inclusive) - may be omitted if endtime is also omitted. If both are omitted, returns the most recent data point. | 2019-02-20T16:00:00-0800 | string
 endtime | ISO 8601 timestamp (inclusive) - if endtime is omitted, endtime is equal to  | 2019-02-20T16:15:00-0800 | string
 style | Style of data to provide. Optional - can be all or moer. Defaults to all if omitted. | all | string
 moerversion | MOERversion. Defaults to the latest version for a given region if omitted. Omit this field unless you need to request a particular version. | 2.1.1 | string
@@ -370,8 +377,7 @@ moerversion | MOERversion. Defaults to the latest version for a given region if 
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Region abbreviation | CAISO_ZP26 | string 
-percent | An integer between 0 (clean) and 100 (dirty) representing the relative realtime marginal emissions intensity | 53 | integer 
+ba | Balancing authority abbreviation | CAISO_ZP26 | string 
 datatype | Type of data | MOER | string 
 frequency | Duration in seconds for which the data is valid from point_time | 300 | integer 
 market | Market type, only useful for grid data | RTM | string
@@ -433,7 +439,7 @@ Please note that this endpoint will return binary data (representing a zip file)
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Region abbreviation | MISO_MI | string 
+ba | Balancing authority abbreviation | MISO_MI | string 
 version | Optional: MOER version to retrieve. Options are latest for the most up-to-date version or all for all versions. Defaults to latest. | all | string 
 
 ### Response
@@ -494,9 +500,9 @@ curl --include \
 
 Obtain MOER forecast data for a given region. Omitting the starttime and endtime parameters will return the most recently generated forecast for a given region. Use the starttime and endtime parameters to obtain historical forecast data.  
 
-Note that starttime and endtime define the time when a forecast was **generated**. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast generated at 1:00, and the forecast generated at 1:05 on January 1.  
+Note that starttime and endtime define the time when a forecast was **generated**. Every five minutes, WattTime generates a new forecast which (depending on the region) is between 8 and 24 hours in duration. So, if you make a request to the forecast endpoint with starttime of Jan 1, 1:00 and endtime Jan 1, 1:05, you will receive the forecast (all 288 values in the forecast window) generated at 1:00, and the forecast generated at 1:05 on January 1.  
   
-Access to this endpoint is restricted to customers with ANALYST or PRO subscriptions.
+Access to this endpoint is restricted to customers with PRO subscriptions.
 
 <aside class="success">
 Historical forecast queries are limited to a maximum time span of 1 day. If you want to query more data than that, please break up your request into multiple queries.
@@ -510,7 +516,7 @@ Historical forecast queries are limited to a maximum time span of 1 day. If you 
 
 Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
-ba | Region abbreviation | CAISO_ZP26 | string 
+ba | Balancing authority abbreviation | CAISO_ZP26 | string 
 starttime | ISO 8601 timestamp (inclusive) - Omit to obtain the real-time forecast. If included, those forecasts generated between start and endtime are returned. | 2019-02-20T16:45:30-0800 | string
 endtime | ISO 8601 timestamp (inclusive)- Omit to obtain the real-time forecast. If included, those forecasts generated between start and endtime are returned. | 2019-02-20T17:45:30-0800 | string
 
@@ -526,9 +532,9 @@ The value of the ‘forecast’ key is a list of dictionaries containing the fol
 
 Key | Description | Example | Type
 --- | ----------- | ------- | ----
-ba | Region abbreviation | CAISO_ZP26 | string 
+ba | Balancing authority abbreviation | CAISO_ZP26 | string 
 point_time | ISO8601 UTC date/time format indicating when this data became valid | 2019-01-29T14:55:00.00Z | string
-value | Number value of data (corresponding to datatype above) | 909.06 | float 
+value | MOER value (corresponding to datatype above) | 909.06 | float 
 version | MOER version (Not present and not applicable for other datatypes) | 2.0 | string 
   
     
