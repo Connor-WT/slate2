@@ -10814,7 +10814,9 @@ jQuery.trim = function( text ) {
 		( text + "" ).replace( rtrim, "" );
 };
 
-
+$(document.links).filter(function() {
+    return this.hostname != window.location.hostname;
+}).attr('target', '_blank');
 
 // Register as a named AMD module, since jQuery can be concatenated with other
 // files that may use define, but not via a proper concatenation script that
