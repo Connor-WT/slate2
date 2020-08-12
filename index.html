@@ -363,7 +363,7 @@
 
 <p>The <code>/data</code>, <code>/historical</code>, and <code>/forecast</code> endpoints are only available to subscribers. ANALYST and PRO data plans can be found <a href="https://www.watttime.org/get-the-data/data-plans/" target="_blank">here</a>.</p>
 
-<p>For (Python3) example code that can be used to register, log in, and query data, please see our <a href="https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py">example code</a>.</p>
+<p>For (Python3) example code that can be used to register, log in, and query data, please see our <a href="https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py" target="_blank">example code</a>.</p>
 <h3 id='restrictions'>Restrictions</h3>
 <p>There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an <code>HTTP 429</code> error code returned.</p>
 <h1 id='authentication'>Authentication</h1>
@@ -557,9 +557,9 @@ Token expires after 30 minutes. If a data call returns 401, you will need to log
 </span><span class="nl">"name"</span><span class="p">:</span><span class="s2">"ISONE Western/Central Massachusetts"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div><h3 id='ba-from-loc'><code>/ba-from-loc</code></h3>
-<p>This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an &quot;Invalid Coordinates&quot; error if the point lies outside of known BAs. For more information on what a balancing authority is, see <a href="https://www.eia.gov/todayinenergy/detail.php?id=27152">this explanation</a> from the EIA.</p>
+<p>This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an &quot;Invalid Coordinates&quot; error if the point lies outside of known BAs. For more information on what a balancing authority is, see <a href="https://www.eia.gov/todayinenergy/detail.php?id=27152" target="_blank">this explanation</a> from the EIA.</p>
 
-<p>See <a href="https://www.watttime.org/explorer/#3/41.23/-97.64">map coverage</a> for available grid regions.</p>
+<p>See <a href="https://www.watttime.org/explorer/#3/41.23/-97.64" target="_blank">map coverage</a> for available grid regions.</p>
 <h3 id='http-request-4'>HTTP Request</h3>
 <p><code>GET https://api2.watttime.org/v2/ba-from-loc/?latitude=42.372&amp;longitude=-72.519</code></p>
 <h3 id='url-query-parameters-4'>URL Query Parameters</h3>
