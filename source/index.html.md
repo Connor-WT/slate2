@@ -14,7 +14,7 @@ code_clipboard: true
 
 WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into your local electricity grid’s marginal emissions rate. 
 
-The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
+The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/" target="_blank">What is AER</a> [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
   
 You can access the API by sending standard HTTP requests to the endpoints listed below. 
 
