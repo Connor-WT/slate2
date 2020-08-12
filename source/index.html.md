@@ -18,7 +18,7 @@ The WattTime API provides access to real-time, forecast, and historical marginal
   
 You can access the API by sending standard HTTP requests to the endpoints listed below. 
 
-The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. ANALYST and PRO data plans can be found [here] (https://www.watttime.org/get-the-data/data-plans/).
+The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. ANALYST and PRO data plans can be found <a href="https://www.watttime.org/get-the-data/data-plans/" target="_blank">here</a>.
 
 For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
 
