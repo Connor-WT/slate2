@@ -14,7 +14,7 @@ code_clipboard: true
 
 WattTime technology—based on real-time grid data, cutting-edge algorithms, and machine learning—provides first-of-its-kind insight into your local electricity grid’s marginal emissions rate. 
 
-The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/" target="_blank">What is AER</a> [What is AER] (https://www.watttime.org/aer/what-is-aer/) and [How AER works] (https://www.watttime.org/aer/how-aer-works/).
+The WattTime API provides access to real-time, forecast, and historical marginal emissions data for electric grids around the world. For a deeper understanding of these Marginal Operating Emissions Rates (MOERs) please see <a href="https://www.watttime.org/aer/what-is-aer/" target="_blank">What is AER</a> and <a href="https://www.watttime.org/aer/how-aer-works/" target="_blank">How AER works</a>.
   
 You can access the API by sending standard HTTP requests to the endpoints listed below. 
 
@@ -301,7 +301,8 @@ Parameter | Description | Example | Type
 --------- | ----------- | ------- | ----
 freq | Duration from point_time for when new value is expected (in seconds) | 300 | string 
 ba | Balancing authority abbreviation | CAISO_ZP26 | string 
-percent | An integer between 0 (minimum MOER in the last two weeks i.e. clean) and 100 (maximum MOER in the last two weeks i.e. dirty) representing the relative realtime marginal emissions intensity. | 53 | integer 
+percent | An integer between 0 (minimum MOER in the last two weeks i.e. clean) and 100 (maximum MOER in the last two weeks
+i.e. dirty) representing the relative realtime marginal emissions intensity. | 53 | integer 
 moer | Marginal Operating Emissions Rate (MOER) measured in lbs CO2/MWh. This is only available for PRO subscriptions | 850.743 | float
 point_time | ISO8601 UTC date/time format indicating when this data became valid | 2019-01-29T14:55:00.00Z | string
 
