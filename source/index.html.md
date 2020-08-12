@@ -20,7 +20,7 @@ You can access the API by sending standard HTTP requests to the endpoints listed
 
 The `/data`, `/historical`, and `/forecast` endpoints are only available to subscribers. ANALYST and PRO data plans can be found <a href="https://www.watttime.org/get-the-data/data-plans/" target="_blank">here</a>.
 
-For (Python3) example code that can be used to register, log in, and query data, please see our [example code] (https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py).
+For (Python3) example code that can be used to register, log in, and query data, please see our <a href="https://github.com/WattTime/apiv2-example/blob/master/query_apiv2.py" target="_blank">example code</a>.
 
 ### Restrictions
 There are strict limits on the number of connections and rates at which you may query the API. From any single IP address you may make a maximum of 10 connections, and may have up to 100 outstanding queries that will be rate limited to 10 requests per second. If there are more than 100 requests outstanding, or more than 10 connections, those requests may be dropped and an `HTTP 429` error code returned.
@@ -208,10 +208,10 @@ curl -H "Authorization: Bearer abcdef0123456789fedcabc" https://api2.watttime.or
 ```
 ### `/ba-from-loc`
 
-This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an "Invalid Coordinates" error if the point lies outside of known BAs. For more information on what a balancing authority is, see [this explanation] (https://www.eia.gov/todayinenergy/detail.php?id=27152) from the EIA.
+This endpoint, provided a latitude and longitude parameter, returns the enclosing balancing authority details if known, or an "Invalid Coordinates" error if the point lies outside of known BAs. For more information on what a balancing authority is, see <a href="https://www.eia.gov/todayinenergy/detail.php?id=27152" target="_blank">this explanation</a> from the EIA.
 
     
-See [map coverage] (https://www.watttime.org/explorer/#3/41.23/-97.64) for available grid regions.
+See <a href="https://www.watttime.org/explorer/#3/41.23/-97.64" target="_blank">map coverage</a> for available grid regions.
 
 ### HTTP Request
 
